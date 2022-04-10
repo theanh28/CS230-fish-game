@@ -1,0 +1,13 @@
+0. ABOUT:
+	A C implementation of the popular My fish! game using pointers and dynamic memory allocation while applying heuristic algorithm for an AI player.
+
+1. OVERALL STRUCTURE:
+	First, the game ask for game board size (MxN). Then we initialize the game board. Next, we maintain a game loop that continuously perform player and AI turn, until BOTH cannot move. To perform the player turn, first we check if the player can make a viable move (by trying to move 1 step in each of the 8 directions). If we cannot move, the turn ends, else we ask for the player command and try to perform it. If we cannot perform the move (path is blocked, no path, out of grid, etc.), we go back to asking player command, until they give us a valid command and we successfully perform the move. After the player move, we perform the AI move: check if the AI can make a viable move, then use our algorithm to find the best position to move to (details in part 2). Finally, we check if anyone has made a move, and start a new game loop, or move to announce result and end the game.
+
+2. CONSTRUCT THE BOARD:
+	First, we have a struct Grid {char .v: data, struct Grid * 8 directional pointers}. Then my program reads {m} and {n} to construct the board m x n (typically 6x6). Then we allocate m*n*sizeof (struct Grid) in the heap memory and have a grid pointer map point to it. Next, we iterate over m*n positions on the board, accessing element[i][j] by using  map + i*n + j, set the value of the grid (the .v field), and link its 8 pointers to 8 direction (up = pointer - n, right = pointer + 1, etc., in a 6x6 game board, n =6 ). Finally, we check for edge cases where the element lies on the border of the grid (e.g. (0, 0), (0, 3), ...) and set pointers that don't lead to other grid element as NULL.
+
+3. THE AI:
+	First, we try for every direction in 8 directions: 
+	For example: try direction "UP":
+	Maintain a {best} grid pointer pointing to the best position reachable from AI current position. Try to move 1 step towards that direction (create a temporary grid pointer iterator {curPos}, go 1 step UP: curPos = curPos->up), then check if that position can be moved to. If OK, we update {best} with that position (better? then best = that position). If not, we try another direction. My implementation will modularize these process, but this is what happens in general. After 8 directions, we know what reachable position is the best, and have the AI move there (simply redirect the AI position pointer + set old position = '.' + set new position = 'A')
